@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 from pathlib import Path
+import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 from utils.debevec import debevec
@@ -16,6 +17,12 @@ def parse_args():
         "-s",
         "--shutter_speed_file",
         type=Path
+    )
+    parser.add_argument(
+        "-o",
+        "--output_dir",
+        type=Path, 
+        default=""
     )
     parser.add_argument(
         "-l",
@@ -53,6 +60,11 @@ if __name__ == "__main__":
         )
         hdrs.append(hdr)
         plt.plot(g, range(0, 256), 'x', c=color[i], markersize=3)
+
+    hdrs_np = np.exp2(np.array(hdrs).transpose(1, 2, 0))
+
+    if args.output_dir:
+        cv2.imwrite(str(args.output_dir / "result.hdr"), hdrs_np)
 
     plt.figure("HDR image")
     plt.imshow(
