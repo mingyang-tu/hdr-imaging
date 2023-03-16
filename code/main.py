@@ -21,7 +21,7 @@ def parse_args():
     parser.add_argument(
         "-o",
         "--output_dir",
-        type=Path, 
+        type=Path,
         default=""
     )
     parser.add_argument(
