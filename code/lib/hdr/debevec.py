@@ -9,8 +9,6 @@ def solve_g(Z_samp: NDArray[np.uint8], weight: NDArray[Any], ln_delta_t: NDArray
     N_SAMP, P_IMGS = Z_samp.shape
     Z_MAX = 256
 
-    assert ln_delta_t.shape[0] == P_IMGS and weight.shape[0] == Z_MAX
-
     A_mat = np.zeros((N_SAMP * P_IMGS + Z_MAX + 1, N_SAMP + Z_MAX), dtype=np.float32)
     b_vec = np.zeros((N_SAMP * P_IMGS + Z_MAX + 1, 1), dtype=np.float32)
 
@@ -40,14 +38,10 @@ def solve_g(Z_samp: NDArray[np.uint8], weight: NDArray[Any], ln_delta_t: NDArray
 
 
 def debevec(images: list[NDArray[np.uint8]], delta_t: list[float], lamb: float) -> tuple[NDArray[np.float32], NDArray[np.float32]]:
-    assert len(images) > 1 and len(images) == len(delta_t)
-
     P_IMGS = len(images)
     N_SAMP = max(int(255 / (P_IMGS - 1)) + 1, 50)
 
     ROW, COL = images[0].shape
-
-    assert all([(i.shape[0] == ROW) and (i.shape[1] == COL) for i in images])
 
     row_idx = np.random.randint(10, ROW-10, N_SAMP)
     col_idx = np.random.randint(10, COL-10, N_SAMP)
@@ -69,6 +63,6 @@ def debevec(images: list[NDArray[np.uint8]], delta_t: list[float], lamb: float) 
     for i in range(P_IMGS):
         g_image_stack[i, :, :] -= ln_delta_t[i]
 
-    hdr = np.sum(w_stack * g_image_stack, axis=0) / (np.sum(w_stack, axis=0) + 1e-9)
+    ln_E = np.sum(w_stack * g_image_stack, axis=0) / (np.sum(w_stack, axis=0) + 1e-9)
 
-    return hdr, g_transform
+    return np.exp2(ln_E), g_transform

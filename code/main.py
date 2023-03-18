@@ -1,75 +1,43 @@
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
+from numpy.typing import NDArray
 import numpy as np
-import matplotlib.pyplot as plt
 import cv2
-from utils.debevec import debevec
+from lib import *
 
 
-def parse_args():
+def parse_args() -> Namespace:
     parser = ArgumentParser()
-    parser.add_argument(
-        "-i",
-        "--images_dir",
-        type=Path
-    )
-    parser.add_argument(
-        "-s",
-        "--shutter_speed_file",
-        type=Path
-    )
-    parser.add_argument(
-        "-o",
-        "--output_dir",
-        type=Path,
-        default=""
-    )
-    parser.add_argument(
-        "-l",
-        "--lamb",
-        type=float,
-        default=30.
-    )
+    parser.add_argument("-i", "--images_dir", type=Path, required=True)
+    parser.add_argument("-s", "--shutter_speed_file", type=Path, required=True)
+    parser.add_argument("-o", "--output_dir", type=Path, default=None)
+    parser.add_argument("--hdr_alg", type=str, default="debevec")
+    parser.add_argument("--lamb", type=float, default=30.)
+    parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
     return args
 
 
-if __name__ == "__main__":
-    args = parse_args()
-
+def read_files(args: Namespace) -> tuple[list[NDArray[np.uint8]], list[float]]:
     root = args.images_dir
-    ss_file = args.shutter_speed_file
 
     images, delta_t = [], []
-    with open(root / ss_file) as f:
+    with open(root / args.shutter_speed_file) as f:
         lines = f.readlines()
         for line in lines[3:]:
             temp = line.split()
             images.append(cv2.imread(str(root / temp[0])))
             delta_t.append(1 / float(temp[1]))
 
-    color = ['b', 'g', 'r']
-    hdrs = []
+    return images, delta_t
 
-    plt.figure(f"lambda = {args.lamb}")
-    for i in range(3):
-        hdr, g = debevec(
-            [im[:, :, i] for im in images],
-            delta_t,
-            args.lamb
-        )
-        hdrs.append(hdr)
-        plt.plot(g, range(0, 256), 'x', c=color[i], markersize=3)
 
-    hdrs_np = np.exp2(np.array(hdrs).transpose(1, 2, 0))
+if __name__ == "__main__":
+    args = parse_args()
+
+    images, delta_t = read_files(args)
+
+    hdr_image = hdr_bgr(images, delta_t, args.hdr_alg, args)
 
     if args.output_dir:
-        cv2.imwrite(str(args.output_dir / "result.hdr"), hdrs_np)
-
-    plt.figure("HDR image")
-    plt.imshow(
-        (19 * hdrs[0] + 183 * hdrs[1] + 54 * hdrs[2]) / 256,
-        cmap="jet"
-    )
-    plt.colorbar()
-    plt.show()
+        cv2.imwrite(str(args.output_dir / "result.hdr"), hdr_image)

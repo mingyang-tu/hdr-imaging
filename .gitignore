@@ -1,4 +1,6 @@
 .DS_Store
 Memorial_SourceImages/
 exposures/
+data/
 venv/
+__pycache__/
