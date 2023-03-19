@@ -23,12 +23,12 @@ class Debevec:
         hdrs = np.zeros(self.SHAPE, dtype=np.float32)
         gs = np.zeros((256, 3), dtype=np.float32)
         for i in range(3):
-            hdr, g = self.optimize_channel(i)
+            hdr, g = self.fit_channel(i)
             hdrs[:, :, i] = hdr
             gs[:, i] = g
         return hdrs, gs
 
-    def optimize_channel(self, channel: int) -> tuple[NDArray[np.float32], NDArray[np.float32]]:
+    def fit_channel(self, channel: int) -> tuple[NDArray[np.float32], NDArray[np.float32]]:
         Z_samp = np.zeros((self.N_SAMP, self.P_IMGS), dtype=np.uint8)
 
         for i in range(self.P_IMGS):
@@ -46,7 +46,7 @@ class Debevec:
 
         return np.exp2(ln_E), g_transform
 
-    def solve_g(self, Z_samp) -> NDArray[np.float32]:
+    def solve_g(self, Z_samp: NDArray[np.uint8]) -> NDArray[np.float32]:
         Z_MAX = 256
 
         A_mat = np.zeros((self.N_SAMP * self.P_IMGS + Z_MAX + 1, self.N_SAMP + Z_MAX), dtype=np.float32)

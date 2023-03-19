@@ -3,7 +3,7 @@ from pathlib import Path
 from numpy.typing import NDArray
 import numpy as np
 import cv2
-from lib import *
+from lib import get_hdr
 
 
 def parse_args() -> Namespace:
@@ -13,6 +13,7 @@ def parse_args() -> Namespace:
     parser.add_argument("-o", "--output_dir", type=Path, default=None)
     parser.add_argument("--hdr_alg", type=str, default="debevec")
     parser.add_argument("--lamb", type=float, default=30.)
+    parser.add_argument("--threshold", type=float, default=1e-6)
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
     return args
@@ -28,6 +29,12 @@ def read_files(args: Namespace) -> tuple[list[NDArray[np.uint8]], list[float]]:
             temp = line.split()
             images.append(cv2.imread(str(root / temp[0])))
             delta_t.append(1 / float(temp[1]))
+
+    print(f"Exposure:\n{delta_t}")
+
+    # s = images[0].shape
+    # for i in range(len(images)):
+    #     images[i] = cv2.resize(images[i], (s[1] // 4, s[0] // 4))
 
     return images, delta_t
 
