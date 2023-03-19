@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     images, delta_t = read_files(args)
 
-    hdr_image = hdr_bgr(images, delta_t, args.hdr_alg, args)
+    hdr_image = get_hdr(images, delta_t, args.hdr_alg, args)
 
     if args.output_dir:
         cv2.imwrite(str(args.output_dir / "result.hdr"), hdr_image)

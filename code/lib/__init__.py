@@ -1,3 +1,3 @@
-from .hdr.hdr import hdr_bgr
+from .hdr.hdr import get_hdr
 
-__all__ = ["hdr_bgr"]
+__all__ = ["get_hdr"]
