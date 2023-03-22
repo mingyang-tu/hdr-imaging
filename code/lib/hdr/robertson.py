@@ -39,14 +39,14 @@ class Robertson:
     def fit_channel(self, channel: int) -> tuple[NDArray[np.float32], NDArray[np.float32]]:
         g_transform = np.arange(0, 256, dtype=np.float32) / 128.
         iteration = 1
-        last_sum = 0
+        last_sum = np.inf
 
         for _ in range(30):
             energy = self.optimize_E(channel, g_transform)
             g_transform = self.optimize_g(channel, energy)
 
             curr_sum = self.cal_objective(channel, g_transform, energy)
-            diff = abs(last_sum - curr_sum)
+            diff = last_sum - curr_sum
             print(f"Iteration: {iteration:2d}, curr_sum: {curr_sum:.9f}, diff: {diff:.9f}")
             if diff < self.threshold:
                 break
