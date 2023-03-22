@@ -55,14 +55,14 @@ def MTB(basic, images):
 
 
 
-imgs = []
-for i in range(1,14):
-    img = cv.imread("..\..\data\exposures\exposures\img{:02d}.jpg".format(i))
-    imgs.append(img)
+# imgs = []
+# for i in range(1,14):
+#     img = cv.imread("..\..\data\exposures\exposures\img{:02d}.jpg".format(i))
+#     imgs.append(img)
 
-sft_imgs = MTB(imgs[0], imgs[1:14])
+# sft_imgs = MTB(imgs[0], imgs[1:14])
 
-# cv.imshow('Image', sft_imgs[0])
-# cv.waitKey()
-for i in range(0,12):
-    cv.imwrite("..\..\data\output\img{:02d}.jpg".format(i+2), sft_imgs[i])
+# # cv.imshow('Image', sft_imgs[0])
+# # cv.waitKey()
+# for i in range(0,12):
+#     cv.imwrite("..\..\data\output\img{:02d}.jpg".format(i+2), sft_imgs[i])

@@ -3,7 +3,10 @@ from pathlib import Path
 from numpy.typing import NDArray
 import numpy as np
 import cv2
+
 from lib import get_hdr
+from lib.MTB import *
+from lib.tonemap import tonemapping
 
 
 def parse_args() -> Namespace:
@@ -44,7 +47,12 @@ if __name__ == "__main__":
 
     images, delta_t = read_files(args)
 
-    hdr_image = get_hdr(images, delta_t, args.hdr_alg, args)
+    sft_imgs = MTB(images[0], images[1:14])
+    sft_imgs.append(images[0])
+
+    hdr_images = get_hdr(sft_imgs, delta_t, args.hdr_alg, args)
+
+    output = [tonemapping(img) for img in hdr_images]
 
     if args.output_dir:
-        cv2.imwrite(str(args.output_dir / "result.hdr"), hdr_image)
+        cv2.imwrite(str(args.output_dir / "result.hdr"), hdr_images)

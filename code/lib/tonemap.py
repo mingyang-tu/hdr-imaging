@@ -26,8 +26,3 @@ def tonemapping(hdr, alpha = 0.36 , bgr_ratio = [0.23, 0.67, 0.10]):
     cv.imshow('Image', ldr)
     cv.waitKey()
     return ldr
-
-
-img = cv.imread("./result.hdr")
-
-ldr = tonemapping(img)
