@@ -10,7 +10,8 @@ from .robertson import Robertson
 def get_hdr(images: list[NDArray[np.uint8]], delta_t: list[float], algorithm: str, args: Namespace) -> NDArray[np.float32]:
     ROW, COL, _ = images[0].shape
 
-    assert len(images) > 1 and len(images) == len(delta_t)
+    assert len(images) > 1
+    assert len(images) == len(delta_t), f"len(images) = {len(images)}, len(delta_t) = {len(delta_t)}"
     assert all([(i.shape[0] == ROW) and (i.shape[1] == COL) for i in images])
 
     if algorithm == "debevec":
