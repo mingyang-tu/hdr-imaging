@@ -15,16 +15,16 @@ def get_hdr(images: list[NDArray[np.uint8]], delta_t: list[float], algorithm: st
     assert all([(i.shape[0] == ROW) and (i.shape[1] == COL) for i in images])
 
     if algorithm == "debevec":
-        deb = Debevec(images, delta_t, args.lamb)
+        deb = Debevec(images, delta_t, args.hdr_lamb)
         hdrs, g_trans = deb.fit()
     elif algorithm == "robertson":
-        rob = Robertson(images, delta_t, args.threshold)
+        rob = Robertson(images, delta_t, args.hdr_threshold)
         hdrs, g_trans = rob.fit()
     else:
         raise ValueError("Algorithm not supported.")
 
     COLOR = "bgr"
-    if args.verbose:
+    if args.show_hdr:
         _, axes1 = plt.subplots(2, 2)
         for i in range(3):
             axes1[i // 2][i % 2].plot(g_trans[:, i], range(0, 256), 'x', c=COLOR[i], markersize=3)
