@@ -7,7 +7,7 @@ from .debevec import Debevec
 from .robertson import Robertson
 
 
-def get_hdr(images: list[NDArray[np.uint8]], delta_t: list[float], algorithm: str, args: Namespace) -> NDArray[np.float32]:
+def get_hdr(images: list[NDArray[np.uint8]], delta_t: list[float], algorithm: str, args: Namespace) -> NDArray[np.float64]:
     ROW, COL, _ = images[0].shape
 
     assert len(images) > 1

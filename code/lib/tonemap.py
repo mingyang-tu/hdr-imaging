@@ -4,11 +4,11 @@ from numpy.typing import NDArray
 from argparse import Namespace
 
 
-def reinhard(hdr: NDArray[np.float32], algorithm: str, args: Namespace) -> NDArray[np.uint8]:
+def reinhard(hdr: NDArray[np.float64], algorithm: str, args: Namespace) -> NDArray[np.uint8]:
     bgr_ratio = [0.23, 0.67, 0.10]
     ROW, COL, _ = hdr.shape
 
-    L_w = np.zeros((ROW, COL), dtype=np.float32)
+    L_w = np.zeros((ROW, COL), dtype=np.float64)
     for i in range(3):
         L_w += bgr_ratio[i] * hdr[:,:,i] 
 
@@ -27,23 +27,23 @@ def reinhard(hdr: NDArray[np.float32], algorithm: str, args: Namespace) -> NDArr
     else:
         raise ValueError("Algorithm not supported.")
 
-    ldr = np.zeros((ROW, COL, 3), dtype=np.float32)
+    ldr = np.zeros((ROW, COL, 3), dtype=np.float64)
 
     for i in range(3):
-        ldr[:, :, i] = hdr[:, :, i] * (L_d / (L_w + 1e-9))
+        ldr[:, :, i] = hdr[:, :, i] * (L_d / (L_w + 1e-8))
 
     ldr = np.clip(ldr*255 , 0 , 255).astype(np.uint8)
     return ldr
 
 
-def global_operator(L: NDArray[np.float32], L_white: np.float32) -> NDArray[np.float32]:
+def global_operator(L: NDArray[np.float64], L_white: np.float64) -> NDArray[np.float64]:
     L_d = L * (1 + L / (L_white**2)) / (1 + L)
     return L_d
 
 
-def local_operator(L: NDArray[np.float32], alpha: float, phi: float = 8, eps: float = 0.5):
-    finish = np.zeros(L.shape, dtype=np.float32)
-    L_d = np.zeros(L.shape, dtype=np.float32)
+def local_operator(L: NDArray[np.float64], alpha: float, phi: float = 8, eps: float = 0.5):
+    finish = np.zeros(L.shape, dtype=np.float64)
+    L_d = np.zeros(L.shape, dtype=np.float64)
     L_blur_last = cv.GaussianBlur(L , (5 , 5) , 1)
 
     for i in range(1, 11):
