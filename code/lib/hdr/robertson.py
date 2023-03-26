@@ -4,6 +4,8 @@ from numpy.typing import NDArray
 
 class Robertson:
     def __init__(self, images: list[NDArray[np.uint8]], delta_t: list[float], threshold: float) -> None:
+        print(f"threshold = {threshold}")
+
         self.P_IMGS = len(images)
         self.SHAPE = images[0].shape
         self.threshold = threshold

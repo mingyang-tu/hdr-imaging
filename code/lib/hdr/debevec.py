@@ -4,6 +4,8 @@ from numpy.typing import NDArray
 
 class Debevec:
     def __init__(self, images: list[NDArray[np.uint8]], delta_t: list[float], lamb: float) -> None:
+        print(f"lamb = {lamb}")
+
         self.P_IMGS = len(images)
         self.SHAPE = images[0].shape
         self.lamb = lamb
