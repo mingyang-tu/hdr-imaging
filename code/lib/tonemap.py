@@ -2,10 +2,13 @@ import cv2 as cv
 import numpy as np
 from numpy.typing import NDArray
 from argparse import Namespace
+import math
 
 
 def reinhard(hdr: NDArray[np.float64], algorithm: str, args: Namespace) -> NDArray[np.uint8]:
-    bgr_ratio = [0.23, 0.67, 0.10]
+    print(f"alpha = {args.tmo_alpha}, gamma = {args.tmo_gamma}")
+
+    bgr_ratio = [0.06, 0.67, 0.27]
     ROW, COL, _ = hdr.shape
 
     L_w = np.zeros((ROW, COL), dtype=np.float64)
@@ -30,7 +33,7 @@ def reinhard(hdr: NDArray[np.float64], algorithm: str, args: Namespace) -> NDArr
     ldr = np.zeros((ROW, COL, 3), dtype=np.float64)
 
     for i in range(3):
-        ldr[:, :, i] = hdr[:, :, i] * (L_d / (L_w + 1e-8))
+        ldr[:, :, i] = (hdr[:, :, i] * (L_d / (L_w + 1e-8))) ** (args.tmo_gamma)
 
     ldr = np.clip(ldr*255 , 0 , 255).astype(np.uint8)
     return ldr
@@ -41,17 +44,23 @@ def global_operator(L: NDArray[np.float64], L_white: np.float64) -> NDArray[np.f
     return L_d
 
 
-def local_operator(L: NDArray[np.float64], alpha: float, phi: float = 8, eps: float = 0.5):
+def local_operator(L: NDArray[np.float64], alpha: float, phi: float = 8, eps: float = 0.05):
+    print(f"phi = {phi}, eps = {eps}")
+
     finish = np.zeros(L.shape, dtype=np.float64)
     L_d = np.zeros(L.shape, dtype=np.float64)
-    L_blur_last = cv.GaussianBlur(L , (5 , 5) , 1)
+    sigma = 0.5
+    radius, patch_size = cal_rps(sigma)
+    L_blur_last = cv.GaussianBlur(L, (patch_size, patch_size), sigma)
 
-    for i in range(1, 11):
-        var = 1.6**i
-        L_blur_now = cv.GaussianBlur(L , (5 , 5) , var)
-        V = (L_blur_last - L_blur_now) / (2**phi * alpha / (var/1.6)**2 + L_blur_last)
+    for _ in range(8):
+        sigma *= 1.6
+        radius, patch_size = cal_rps(sigma)
 
-        idx = (np.absolute(V) < eps) & np.logical_not(finish)
+        L_blur_now = cv.GaussianBlur(L, (patch_size, patch_size), sigma)
+        V = (L_blur_last - L_blur_now) / (2**phi * alpha / radius**2 + L_blur_last)
+
+        idx = (np.absolute(V) > eps) & np.logical_not(finish)
         L_d[idx] = (L / (1 + L_blur_last))[idx]
         finish[idx] = True
 
@@ -61,3 +70,9 @@ def local_operator(L: NDArray[np.float64], alpha: float, phi: float = 8, eps: fl
     L_d[idx] = (L / (1 + L_blur_last))[idx]
 
     return L_d
+
+
+def cal_rps(sigma: float) -> tuple[int, int]:
+    radius = math.ceil(sigma * 2)
+    patch_size = 2 * radius + 1
+    return radius, patch_size

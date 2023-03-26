@@ -18,9 +18,10 @@ def parse_args() -> Namespace:
     parser.add_argument("--hdr_lamb", type=float, default=30.)
     parser.add_argument("--hdr_threshold", type=float, default=1e-6)
     parser.add_argument("--tmo_alg", type=str, default="local")
+    parser.add_argument("--tmo_gamma", type=float, default=0.46)
     parser.add_argument("--tmo_alpha", type=float, default=0.18)
     parser.add_argument("--tmo_phi", type=float, default=8)
-    parser.add_argument("--tmo_eps", type=float, default=0.5)
+    parser.add_argument("--tmo_eps", type=float, default=0.05)
     args = parser.parse_args()
     return args
 
