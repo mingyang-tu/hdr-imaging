@@ -61,3 +61,9 @@ def mtb(basic: NDArray[np.uint8], images: list[NDArray[np.uint8]]) -> list[NDArr
         sft_img = shift(image, offset)
         sft_imgs.append(sft_img)
     return sft_imgs
+
+
+# if __name__ == "__main__":
+#     img = cv.imread("../../exposures/img05.jpg")
+#     img_sh = shift(img, (17, -9))
+#     print(find_offset(img, img_sh, 6))
