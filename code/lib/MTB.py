@@ -5,7 +5,7 @@ from numpy.typing import NDArray
 import math
 
 
-def bit_and_Xor(img: NDArray[np.uint8], tolerance: float = 8) -> tuple[NDArray[np.bool_], NDArray[np.bool_]]:
+def bit_and_Xor(img: NDArray[np.uint8], tolerance: float = 4) -> tuple[NDArray[np.bool_], NDArray[np.bool_]]:
     threshold = np.median(img)
     bitmap = img < threshold
     mask = (img < (threshold-tolerance)) | (img > (threshold+tolerance))
