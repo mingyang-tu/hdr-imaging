@@ -15,6 +15,7 @@ python main.py \
 # --hdr_lamb 30
 # --hdr_threshold 1e-6
 # --tmo_alg global / local
+# --tmo_gamma 0.46
 # --tmo_alpha 0.18
 # --tmo_phi 8
-# --tmo_eps 0.5
+# --tmo_eps 0.05

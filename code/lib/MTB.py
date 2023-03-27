@@ -2,9 +2,10 @@ import cv2 as cv
 import numpy as np
 from .utility import shift, BGR2GRAY
 from numpy.typing import NDArray
+import math
 
 
-def bit_and_Xor(img: NDArray[np.uint8], tolerance: float = 4) -> tuple[NDArray[np.bool_], NDArray[np.bool_]]:
+def bit_and_Xor(img: NDArray[np.uint8], tolerance: float = 8) -> tuple[NDArray[np.bool_], NDArray[np.bool_]]:
     threshold = np.median(img)
     bitmap = img < threshold
     mask = (img < (threshold-tolerance)) | (img > (threshold+tolerance))
@@ -18,12 +19,12 @@ def eval(bitmap_s: NDArray[np.bool_], bitmap_t: NDArray[np.bool_], mask_s: NDArr
     return np.sum(t, dtype=int)
 
 
-def find_offset(basic: NDArray[np.uint8], img: NDArray[np.uint8]) -> tuple[int, int]:
+def find_offset(basic: NDArray[np.uint8], img: NDArray[np.uint8], search_range: int) -> tuple[int, int]:
 
-    if basic.shape[0] <= 2 or basic.shape[1] <= 2:
+    if search_range <= 0:
         return (0, 0)
 
-    (lx, ly) = find_offset(cv.pyrDown(basic), cv.pyrDown(basic))
+    (lx, ly) = find_offset(cv.pyrDown(basic), cv.pyrDown(img), search_range-1)
 
     lx, ly = lx*2, ly*2
 
@@ -33,8 +34,9 @@ def find_offset(basic: NDArray[np.uint8], img: NDArray[np.uint8]) -> tuple[int, 
     
     best_loss, best_x, best_y = 1e8, 0, 0
 
-    for x in range(-1, 2):
-        for y in range(-1, 2):
+    xyrange = [0, 1, -1]
+    for x in xyrange:
+        for y in xyrange:
             sft_bitmap = shift(bitmap_s, (lx+x,ly+y))
             sft_mask = shift(mask_s, (lx+x,ly+y))
             
@@ -50,10 +52,18 @@ def find_offset(basic: NDArray[np.uint8], img: NDArray[np.uint8]) -> tuple[int, 
 def mtb(basic: NDArray[np.uint8], images: list[NDArray[np.uint8]]) -> list[NDArray[np.uint8]]:
     sft_imgs = []
     g_basic = BGR2GRAY(basic)
+    search_range = int(math.log2(min(g_basic.shape) / 8))
+    print(f"\nSearch Range: ±{2 ** search_range - 1}")
     for image in images:
         g_image = BGR2GRAY(image)
-        offset = find_offset(g_basic, g_image)
+        offset = find_offset(g_basic, g_image, search_range)
         print(f"Offset = {offset}")
         sft_img = shift(image, offset)
         sft_imgs.append(sft_img)
     return sft_imgs
+
+
+# if __name__ == "__main__":
+#     img = cv.imread("../../exposures/img05.jpg")
+#     img_sh = shift(img, (17, -9))
+#     print(find_offset(img, img_sh, 6))
