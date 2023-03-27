@@ -65,7 +65,7 @@ if __name__ == "__main__":
     output = reinhard(hdr_image, args.tmo_alg, args)
 
     if args.output_dir:
-        cv2.imwrite(str(args.output_dir / "result.jpg"), output)
+        cv2.imwrite(str(args.output_dir / "result.png"), output)
         cv2.imwrite(str(args.output_dir / "result.hdr"), hdr_image)
 
     cv2.imshow('Tonemapping Result', output)

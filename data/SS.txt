@@ -1,0 +1,12 @@
+# Number of Images
+9
+# Filename  1/shutter_speed
+IMG_3869.jpeg 250
+IMG_3870.jpeg 120
+IMG_3871.jpeg 60
+IMG_3872.jpeg 30
+IMG_3873.jpeg 15
+IMG_3874.jpeg 8
+IMG_3875.jpeg 4
+IMG_3876.jpeg 2
+IMG_3877.jpeg 1
