@@ -1,21 +1,21 @@
 python main.py \
-    -i ../Memorial_SourceImages \
-    -s memorial.hdr_image_list.txt \
-    --mtb \
-    # -o ../data \
-
-# Memorial_SourceImages / exposures
+    -i ../data \
+    -s SS.txt \
+    -o ../results \
+    --mtb --show_hdr \
+    --tmo_alpha 0.09 --tmo_gamma 0.46 \
+    # --hdr_alg robertson
 
 # -i --images_dir
 # -s --shutter_speed_file
-# -o --output_dir ../data
+# -o --output_dir
 # --mtb
 # --show_hdr
 # --hdr_alg debevec / robertson
-# --hdr_lamb 30
-# --hdr_threshold 1e-6
+# --hdr_lamb
+# --hdr_threshold
 # --tmo_alg global / local
-# --tmo_gamma 0.46
-# --tmo_alpha 0.18
-# --tmo_phi 8
-# --tmo_eps 0.05
+# --tmo_gamma
+# --tmo_alpha
+# --tmo_phi
+# --tmo_eps
