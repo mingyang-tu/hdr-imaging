@@ -2,9 +2,9 @@ python main.py \
     -i ../data \
     -s SS.txt \
     -o ../results \
-    --mtb --show_hdr \
+    --mtb \
     --tmo_alpha 0.09 --tmo_gamma 0.46 \
-    # --hdr_alg robertson
+    --hdr_alg robertson
 
 # -i --images_dir
 # -s --shutter_speed_file
