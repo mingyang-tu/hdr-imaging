@@ -34,6 +34,8 @@ def get_hdr(images: list[NDArray[np.uint8]], delta_t: list[float], algorithm: st
                 for j in range(2):
                     axes1[i][j].set_xscale("log", nonpositive='clip', base=2)
 
+        # plt.savefig('../results/curve.jpg', bbox_inches='tight', dpi=300)
+
         fig2, axes2 = plt.subplots()
         mat = axes2.matshow(
             np.mean(hdrs, axis=2),
