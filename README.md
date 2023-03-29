@@ -3,8 +3,7 @@
 This is a Python implementation of
 
 - Alignment: Median Threshold Bitmap (MTB)
-- HDR: Debevec’s method
-- HDR: Robertson’s method
+- HDR: Debevec’s and Robertson’s method
 - Tone mapping: Reinhard's method - global and local (dodge and burn) operator
 
 ## Requirements
